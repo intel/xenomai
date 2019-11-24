@@ -1,0 +1,8 @@
+/*.patch
+build*/
+snapshots/
+*.swp
+*.orig
+*.rej
+*~
+pull-*/
