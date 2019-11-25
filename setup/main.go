@@ -94,7 +94,6 @@ func execCommand(commandName, runDir string, params []string) bool {
 	cmd := exec.Command(commandName, params...)
 	cmd.Dir = runDir
 	fmt.Println(cmd.Args)
-	fmt.Println("Run dir: ", runDir)
 	//show stdout&stderr instantly
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -214,7 +213,7 @@ func downloadRepos(dirDownload string, manifest string) {
 				continue
 			}
 		} else {
-			println("repo " + localRepoDir + " do not exist, will download it.\n")
+			println("repo " + localRepoDir + " do not exist, will download it.")
 			mani[i].ReDown = true // folder not exist
 		}
 
