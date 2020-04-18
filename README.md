@@ -1,10 +1,10 @@
 # xenomai
 
-This project contains the scripts to setup a Xenomai(xenomai.org) powered real-time co-kernel Linux distribution.
+This project contains the scripts to setup a Xenomai(xenomai.org) powered real-time co-kernel Linux distribution in Yocto/Bitbake way, it has fewest code for education purpose but not for production.
 
 ## Overview: 
 
-The entire project is based on Yocto, Xenomai's code and ipipe pathces are organized into meta-xenomai. 'download.sh' will download a code snapshot of Yocto poky and other meta layers, based on the branch&revision in the manifest which you selected.
+The entire project is based on Yocto, Xenomai's code and ipipe pathces are organized into meta-xenomai-intel. 'download.sh' will download a code snapshot of Yocto poky and other meta layers, based on the branch&revision in the manifest which you selected.
 
 ## Build guide:
 
@@ -32,12 +32,13 @@ $bitbake virtual/kernel
 ```
 - ### flash image:
 Output images under:  build/tmp/deploy/images/intel-corei7-64/
+Assume a USB disk is plugged in and enum as: /dev/sdb
 
 Liveboot USB disk creation for UEFI BIOS:
 ```
-   $ sudo dd if=core-image-xfce-sdk-intel-corei7-64.rootfs.wic of=/dev/sdb bs=4M status=progress conv=fdatasync
+   $ sudo dd if=core-image-xfce-sdk-intel-corei7-64.rootfs.wic of=/dev/sdb bs=4M status=progress oflag=sync
 ```
 Liveboot USB disk creation for legacy BIOS:
 ```
-   $ sudo dd if=core-image-xfce-sdk-intel-corei7-64.hddimg of=/dev/sdb bs=4M status=progress conv=fdatasync
+   $ sudo dd if=core-image-xfce-sdk-intel-corei7-64.hddimg of=/dev/sdb bs=4M status=progress oflag=sync
 ```
