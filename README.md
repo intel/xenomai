@@ -1,4 +1,4 @@
-# xenomai
+# Xenomai
 
 This project contains the scripts to setup a Xenomai(xenomai.org) powered real-time co-kernel Linux distribution in Yocto/Bitbake way, it has fewest code for education purpose but not for production.
 
@@ -11,18 +11,18 @@ The entire project is based on Yocto, Xenomai's code and ipipe pathces are organ
 - ### Prerequisite:
 The scripts are written in Go, please setup Golang environment on your host machine:
 https://golang.org/doc/install  or  https://golang.google.cn/doc/install  for China.
-- ### download:
+- ### Download:
 ```
 $./download.sh
 Pls select a snapshot of code to download:
-[1] ecs_b_1.0
-[2] ecs_b_2.0
+[1] manifest_1
+[2] manifest_2
 ```
-Type "1" to choose "ecs_b_1.0", it combines kernel 4.14.68 and xenomai 3.0.7; detailed branch and revision pls see: setup/manifest_ecs_b_1.0_.go;
+Type "1" to choose "manifest_1", it combines kernel 4.14.68 and xenomai 3.0.7; detailed branch and revision pls see: setup/manifest_1_.go;
 depends on your network, download code snapshot will take some time.
-- ### build:
+- ### Build:
 ```
-$cd snapshots/ecs_b_1.0/
+$cd snapshots/manifest_1/
 $source poky/oe-init-build-env build  ### will jump to build/ automaticly
 $bitbake -k core-image-xfce-sdk
 # or target without build facilities:
@@ -30,8 +30,9 @@ $bitbake -k core-image-xfce
 # or kernel only:
 $bitbake virtual/kernel
 ```
-- ### flash image:
+- ### Make bootable USB disk:
 Output images under:  build/tmp/deploy/images/intel-corei7-64/
+
 Assume a USB disk is plugged in and enum as: /dev/sdb
 
 Liveboot USB disk creation for UEFI BIOS:

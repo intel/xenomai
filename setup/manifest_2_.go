@@ -5,48 +5,25 @@
 ******************************************************************************/
 package main
 
-var manifest_ecs_b_1_0 = []typeRepoGit{
+var manifest_2 = []typeRepoGit{
 	typeRepoGit{
-		Name:         "poky",
-		SrcURI:       "git://git.yoctoproject.org/poky",
-		Branch:       "sumo",
-		LastRevision: "d240b885f26e9b05c8db0364ab2ace9796709aad",
+		Name:   "poky",
+		SrcURI: "git://git.yoctoproject.org/poky",
+		Branch: "warrior",
 	},
 	typeRepoGit{
-		Name:         "meta-openembedded",
-		SrcURI:       "git://git.openembedded.org/meta-openembedded",
-		Branch:       "sumo",
-		LastRevision: "a19aa29f7fa336cd075b72c496fe1102e6e5422b",
+		Name:   "meta-openembedded",
+		SrcURI: "git://git.openembedded.org/meta-openembedded",
+		Branch: "warrior",
 	},
 	typeRepoGit{
-		Name:         "meta-intel",
-		SrcURI:       "git://git.yoctoproject.org/meta-intel",
-		Branch:       "sumo",
-		LastRevision: "aa8f5fad12ed5cda9b3779dd380e29755ab24c79",
-	},
-	typeRepoGit{
-		Name:         "meta-intel-iotg-bsp",
-		LocalRepoDir: "meta-intel-iotg",
-		SrcURI:       "https://github.com/intel/iotg-yocto-bsp-public.git",
-		Branch:       "e3900/master",
-		LastRevision: "a9e85b077160bfa6156ca266599efa9c3eaf5837",
-	},
-	typeRepoGit{
-		Name:         "meta-measured",
-		SrcURI:       "https://github.com/flihp/meta-measured.git",
-		Branch:       "rocko",
-		LastRevision: "b7d667e4796623812ab22fdde99d7ce68622de19",
-	},
-	typeRepoGit{
-		Name:   "meta-xenomai",
-		SrcURI: "https://github.com/intel/meta-xenomai.git",
-		Branch: "4.14.68/base/3.0.7",
+		Name:   "meta-intel",
+		SrcURI: "git://git.yoctoproject.org/meta-intel",
+		Branch: "warrior",
 	},
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-const bblayers_conf_ecs_b_1_0_template = `
+const bblayers_conf_manifest_2_template = `
 # POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
 # changes incompatibly
 POKY_BBLAYERS_CONF_VERSION = "2"
@@ -58,23 +35,17 @@ BBLAYERS ?= " \
   {{.SnapshotDir}}poky/meta \
   {{.SnapshotDir}}poky/meta-poky \
   {{.SnapshotDir}}poky/meta-yocto-bsp \
+  {{.SnapshotDir}}meta-openembedded/meta-oe \
   {{.SnapshotDir}}meta-openembedded/meta-filesystems \
   {{.SnapshotDir}}meta-openembedded/meta-networking \
-  {{.SnapshotDir}}meta-openembedded/meta-oe \
   {{.SnapshotDir}}meta-openembedded/meta-python \
-  {{.SnapshotDir}}meta-openembedded/meta-multimedia \
-  {{.SnapshotDir}}meta-openembedded/meta-gnome \
-  {{.SnapshotDir}}meta-openembedded/meta-xfce \
   {{.SnapshotDir}}meta-intel \
-  {{.SnapshotDir}}meta-measured \
-  {{.SnapshotDir}}meta-intel-iotg/meta-intel-middleware \
-  {{.SnapshotDir}}meta-xenomai \
   "
 `
 
 ///////////////////////////////////////////////////////////////////////////////
 
-const local_conf_ecs_b_1_0_template = `
+const local_conf_manifest_2_template = `
 #
 # This file is your local configuration file and is where all local user settings
 # are placed. The comments in this file give some guide to the options a new user
@@ -91,117 +62,28 @@ const local_conf_ecs_b_1_0_template = `
 #
 # Machine Selection
 #
-MACHINE = "intel-corei7-64"
-
-# Set preferred version for kernel
-PREFERRED_PROVIDER_virtual/kernel = "linux-intel"
-PREFERRED_VERSION_linux-intel-rt = "4.14%"
-
-# Add serial console and boot parameters for RT
-APPEND += "3 \
-scsi_mod.scan=async \
-reboot=efi \
-console=ttyS2,115200n8 \
-processor.max_cstate=0 \
-intel.max_cstate=0 \
-processor_idle.max_cstate=0 \
-intel_idle.max_cstate=0 \
-clocksource=tsc \
-tsc=reliable \
-nmi_watchdog=0 \
-nosoftlockup \
-idle=poll \
-noht \
-isolcpus=1-3 \
-rcu_nocbs=1-3 \
-nohz_full=1-3 \
-i915.enable_guc_loading=1 \
-i915.enable_guc_submission=1 \
-i915.enable_rc6=0 \
-i915.enable_dc=0 \
-i915.disable_power_well=0 \
-"
-
-# Take note that as we are building 3rd party ingredient.
-# We need the LICENSE_FLAGS below.
-LICENSE_FLAGS_WHITELIST += "commercial"
-
-# Enable the security flags as per SDL 4.0 requirement
-require conf/distro/include/security_flags.inc
-SECURITY_CFLAGS = "-fstack-protector-strong -pie -fpie -D_FORTIFY_SOURCE=2 -O2 -Wformat -Wformat-security"
-SECURITY_NO_PIE_CFLAGS = "-fstack-protector-strong -D_FORTIFY_SOURCE=2 -O2 -Wformat -Wformat-security"
-SECURITY_LDFLAGS = "-Wl,-z,relro,-z,now,-z,noexecstack"
-
-# GCC Sanitizers does not compiles with PIE
-SECURITY_CFLAGS_pn-gcc-sanitizers = "${SECURITY_NO_PIE_CFLAGS}"
-
+# You need to select a specific machine to target the build with. There are a selection
+# of emulated machines available which can boot and run in the QEMU emulator:
 #
-# User Space Configuration Override for Intel Platforms
+#MACHINE ?= "qemuarm"
+#MACHINE ?= "qemuarm64"
+#MACHINE ?= "qemumips"
+#MACHINE ?= "qemumips64"
+#MACHINE ?= "qemuppc"
+#MACHINE ?= "qemux86"
+#MACHINE ?= "qemux86-64"
 #
-# Selection of jpeg package provider
-PREFERRED_PROVIDER_jpeg = "jpeg"
-PREFERRED_PROVIDER_jpeg-native = "jpeg-native"
-
-# Include rt test in image
-IMAGE_INSTALL_append = " rt-tests-ptest"
-
-# Add WKS file with updated boot parameters
-WKS_FILE = "systemd-bootdisk-microcode-custom.wks"
-
-#Exclude piglit, ltp and mesa-demos packages
-PACKAGE_EXCLUDE = "packagegroup-core-apl-extra"
-
-# Use samba
-DISTRO_FEATURES_append = " pam"
-
-# Enable xserver-xorg
-IMAGE_INSTALL_append = " xserver-xorg"
-
-# Enable vp8dec for gstreamer1.0-plugins-good
-PACKAGECONFIG_append_pn-gstreamer1.0-plugins-good = "vpx"
-
-# Multi-libraries support is by default "OFF"
-# Please uncomment the 4 lines below to enable multilib support.
-#require conf/multilib.conf
-#DEFAULTTUNE = "corei7-64"
-#MULTILIBS = "multilib:lib32"
-#DEFAULTTUNE_virtclass-multilib-lib32 = "corei7-32"
-
-# Install autoconf-archive
-IMAGE_INSTALL_append = " autoconf-archive"
-
-# Install libva
-IMAGE_INSTALL_append = " libva"
-
-# Install Wayland in image
-DISTRO_FEATURES_append = " wayland pam"
-CORE_IMAGE_EXTRA_INSTALL += "wayland weston weston-examples"
-
-# Install mesa glxinfo
-IMAGE_INSTALL_append = " mesa-glxinfo"
-
-# Install USB-modeswitch and USB-modeswitch-data in image
-IMAGE_INSTALL_append = " usb-modeswitch usb-modeswitch-data"
-
-# Install JHI
-IMAGE_INSTALL_append = " jhi"
-
-# Install IQV driver
-IMAGE_INSTALL_append = " iqvlinux"
-
-# Disable lttng modules
-LTTNGMODULES_corei7-64-intel-common = ""
-
-# Install xinitrc environment file
-IMAGE_INSTALL_append = " xinit-env"
-
-# By default, we want our OS to includes all kernel modules.
-IMAGE_INSTALL_append = " kernel-modules"
-
-# Use systemd init instead of sysV init
-DISTRO_FEATURES_append = " systemd"
-VIRTUAL-RUNTIME_init_manager = "systemd"
-DISTRO_FEATURES_BACKFILL_CONSIDERED = "sysvinit"
+# There are also the following hardware board target machines included for 
+# demonstration purposes:
+#
+#MACHINE ?= "beaglebone-yocto"
+#MACHINE ?= "genericx86"
+#MACHINE ?= "genericx86-64"
+#MACHINE ?= "mpc8315e-rdb"
+#MACHINE ?= "edgerouter"
+#
+# This sets the default machine to be qemux86 if no other machine is selected:
+MACHINE ??= "intel-rt-corei7-64"
 
 #
 # Where to place downloads
@@ -214,7 +96,7 @@ DISTRO_FEATURES_BACKFILL_CONSIDERED = "sysvinit"
 #
 # The default is a downloads directory under TOPDIR which is the build directory.
 #
-#DL_DIR ?= "${TOPDIR}/downloads"
+DL_DIR ?= "${TOPDIR}/downloads"
 
 #
 # Where to place shared-state files
@@ -230,7 +112,7 @@ DISTRO_FEATURES_BACKFILL_CONSIDERED = "sysvinit"
 #
 # The default is a sstate-cache directory under TOPDIR.
 #
-#SSTATE_DIR ?= "${TOPDIR}/sstate-cache"
+SSTATE_DIR ?= "${TOPDIR}/sstate-cache"
 
 #
 # Where to place the build output
@@ -242,7 +124,7 @@ DISTRO_FEATURES_BACKFILL_CONSIDERED = "sysvinit"
 #
 # The default is a tmp directory under TOPDIR.
 #
-#TMPDIR = "${TOPDIR}/tmp"
+TMPDIR = "${TOPDIR}/tmp"
 
 #
 # Default policy config
@@ -252,7 +134,7 @@ DISTRO_FEATURES_BACKFILL_CONSIDERED = "sysvinit"
 # Ultimately when creating custom policy, people will likely end up subclassing 
 # these defaults.
 #
-DISTRO ?= "poky"
+DISTRO ?= "tgr"
 # As an example of a subclass there is a "bleeding" edge policy configuration
 # where many versions are set to the absolute latest code from the upstream 
 # source control systems. This is just mentioned here as an example, its not
@@ -271,7 +153,7 @@ DISTRO ?= "poky"
 #  - 'package_rpm' for rpm style packages
 # E.g.: PACKAGE_CLASSES ?= "package_rpm package_deb package_ipk"
 # We default to rpm:
-PACKAGE_CLASSES ?= "package_rpm package_deb"
+PACKAGE_CLASSES ?= "package_rpm"
 
 #
 # SDK target architecture
@@ -290,6 +172,8 @@ PACKAGE_CLASSES ?= "package_rpm package_deb"
 # variable can contain the following options:
 #  "dbg-pkgs"       - add -dbg packages for all installed packages
 #                     (adds symbol information for debugging/profiling)
+#  "src-pkgs"       - add -src packages for all installed packages
+#                     (adds source code for debugging)
 #  "dev-pkgs"       - add -dev packages for all installed packages
 #                     (useful if you want to develop against libs in the image)
 #  "ptest-pkgs"     - add -ptest packages for all ptest-enabled packages
@@ -304,7 +188,11 @@ PACKAGE_CLASSES ?= "package_rpm package_deb"
 # There are other application targets that can be used here too, see
 # meta/classes/image.bbclass and meta/classes/core-image.bbclass for more details.
 # We default to enabling the debugging tweaks.
-EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
+EXTRA_IMAGE_FEATURES ?= " \
+    debug-tweaks \
+    package-management \
+  ssh-server-openssh \
+"
 
 #
 # Additional image features
@@ -323,10 +211,12 @@ USER_CLASSES ?= "buildstats image-mklibs image-prelink"
 # Runtime testing of images
 #
 # The build system can test booting virtual machine images under qemu (an emulator)
-# after any root filesystems are created and run tests against those images. To
-# enable this uncomment this line. See classes/testimage(-auto).bbclass for
-# further details.
-#TEST_IMAGE = "1"
+# after any root filesystems are created and run tests against those images. It can also
+# run tests against any SDK that are built. To enable this uncomment these lines.
+# See classes/test{image,sdk}.bbclass for further details.
+#IMAGE_CLASSES += "testimage testsdk"
+#TESTIMAGE_AUTO_qemuall = "1"
+
 #
 # Interactive shell configuration
 #
@@ -400,15 +290,21 @@ BB_DISKMON_DIRS ??= "\
 # Qemu configuration
 #
 # By default qemu will build with a builtin VNC server where graphical output can be
-# seen. The two lines below enable the SDL backend too. By default libsdl-native will
+# seen. The two lines below enable the SDL backend too. By default libsdl2-native will
 # be built, if you want to use your host's libSDL instead of the minimal libsdl built
-# by libsdl-native then uncomment the ASSUME_PROVIDED line below.
-PACKAGECONFIG_append_pn-qemu-native = " sdl"
+# by libsdl2-native then uncomment the ASSUME_PROVIDED line below.
+PACKAGECONFIG_append_pn-qemu-system-native = " sdl"
 PACKAGECONFIG_append_pn-nativesdk-qemu = " sdl"
-#ASSUME_PROVIDED += "libsdl-native"
+#ASSUME_PROVIDED += "libsdl2-native"
 
 # CONF_VERSION is increased each time build/conf/ changes incompatibly and is used to
 # track the version of this file when it was generated. This can safely be ignored if
 # this doesn't mean anything to you.
 CONF_VERSION = "1"
+# Select distro features to include
+DISTRO_FEATURES_append = " tgr-bare-metal"
+# Add an additional 1GB of space for container images
+IMAGE_ROOTFS_EXTRA_SPACE = "1000000"
+#NOHDD="1"
+#NOISO="1"
 `
